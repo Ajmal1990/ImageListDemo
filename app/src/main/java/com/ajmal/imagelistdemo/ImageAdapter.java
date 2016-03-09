@@ -5,11 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.ajmal.imagelistdemo.flickrutilities.Photo;
 import com.ajmal.imagelistdemo.flickrutilities.SquareImageView;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.tekle.oss.android.animation.AnimationFactory;
 
@@ -42,12 +44,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         public SquareImageView flickrImage;
         public ViewFlipper viewFlipper;
         public TextView titleText;
+        public ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
             flickrImage = (SquareImageView) itemView.findViewById(R.id.square_image_view);
             viewFlipper = (ViewFlipper)itemView.findViewById(R.id.image_view_flipper);
             titleText = (TextView)itemView.findViewById(R.id.image_title);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
         }
     }
 
@@ -73,8 +77,16 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 currentImage.getServer()+"/"+currentImage.getId()+"_"+
                 currentImage.getSecret()+".jpg";
 
-        Picasso.with(context).load(flickrImageurl).placeholder(R.anim.progress_anim)
-                .into(holder.flickrImage);
+        holder.progressBar.setVisibility(View.VISIBLE);
+        Picasso.with(context).load(flickrImageurl)
+                .into(holder.flickrImage, new ImageLoadedCallback(holder.progressBar) {
+                    @Override
+                    public void onSuccess() {
+                        if (this.progressBar != null) {
+                            this.progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
 
         holder.titleText.setText(currentImage.getTitle());
 
@@ -84,6 +96,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 flipViewFlipper(holder.viewFlipper);
             }
         });
+
+
     }
 
     private void flipViewFlipper(ViewFlipper flipper){
@@ -100,5 +114,23 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         else{
             flipper.setDisplayedChild(0);
         }*/
+    }
+
+    private class ImageLoadedCallback implements Callback {
+        ProgressBar progressBar;
+
+        public  ImageLoadedCallback(ProgressBar progBar){
+            progressBar = progBar;
+        }
+
+        @Override
+        public void onSuccess() {
+
+        }
+
+        @Override
+        public void onError() {
+
+        }
     }
 }

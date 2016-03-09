@@ -5,7 +5,11 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by ajmal on 7/3/16.
+ *  Created by ajmal on 7/3/16.
+ *
+ *  Imageview that makes scales the image to perfect squre
+ *  The idea taken from http://stackoverflow.com/questions/16506275/imageview-be-a-square-with-dynamic-width.
+ *
  */
 public class SquareImageView extends ImageView {
     public SquareImageView(Context context) {
